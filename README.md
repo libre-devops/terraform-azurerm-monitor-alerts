@@ -49,7 +49,7 @@ The module folds them into sibling maps with the quirks handled:
   category whitelist validated and `location = "global"` handled.
 
 Rule names are the display surface of the alerts experience, so the maps are keyed by descriptive
-names ("Application_errors_-_Failed_requests_over_threshold"), never terse identifiers. Rules
+names ("Application errors - Failed requests over threshold"), never terse identifiers. Rules
 without action groups are legal but warn via a `check`: an alert nobody hears is worth seeing at
 plan time. The resource group is passed by id and parsed.
 
@@ -72,7 +72,7 @@ module "monitor_alerts" {
   tags              = module.tags.tags
 
   metric_alerts = {
-    "Application_errors_-_Failed_requests_over_threshold" = {
+    "Application errors - Failed requests over threshold" = {
       scopes           = [local.alert_scopes.app_insights]
       severity         = 1
       action_group_ids = [module.action_group.ids["ag-ldo-uks-prd-001"]]
@@ -88,7 +88,7 @@ module "monitor_alerts" {
   }
 
   scheduled_query_alerts = {
-    "Ingestion_volume_-_Billable_data_over_expected_baseline" = {
+    "Ingestion volume - Billable data over expected baseline" = {
       scopes           = [local.alert_scopes.workspace]
       severity         = 2
       action_group_ids = [module.action_group.ids["ag-ldo-uks-prd-001"]]

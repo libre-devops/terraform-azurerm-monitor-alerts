@@ -10,7 +10,7 @@ variables {
   tags              = { Environment = "tst" }
 
   metric_alerts = {
-    "Application_errors_-_Failed_requests_over_threshold" = {
+    "Application errors - Failed requests over threshold" = {
       scopes           = ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-ldo-uks-tst-01/providers/Microsoft.Insights/components/appi-ldo-uks-tst-01"]
       action_group_ids = ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-ldo-uks-tst-01/providers/Microsoft.Insights/actionGroups/ag-ldo-uks-tst-01"]
 
@@ -24,7 +24,7 @@ variables {
       }]
     }
 
-    "Latency_anomaly_-_Response_time_deviates_from_baseline" = {
+    "Latency anomaly - Response time deviates from baseline" = {
       scopes           = ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-ldo-uks-tst-01/providers/Microsoft.Insights/components/appi-ldo-uks-tst-01"]
       severity         = 2
       tags             = { Team = "platform" }
@@ -39,7 +39,7 @@ variables {
       }]
     }
 
-    "Availability_-_Web_test_failures_across_locations" = {
+    "Availability - Web test failures across locations" = {
       scopes = [
         "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-ldo-uks-tst-01/providers/Microsoft.Insights/webTests/webtest-ldo-uks-tst-01",
         "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-ldo-uks-tst-01/providers/Microsoft.Insights/components/appi-ldo-uks-tst-01",
@@ -55,7 +55,7 @@ variables {
   }
 
   scheduled_query_alerts = {
-    "Ingestion_volume_-_Billable_data_over_baseline" = {
+    "Ingestion volume - Billable data over baseline" = {
       scopes           = ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-ldo-uks-tst-01/providers/Microsoft.OperationalInsights/workspaces/log-ldo-uks-tst-01"]
       severity         = 2
       action_group_ids = ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-ldo-uks-tst-01/providers/Microsoft.Insights/actionGroups/ag-ldo-uks-tst-01"]
@@ -82,7 +82,7 @@ variables {
   }
 
   smart_detector_alerts = {
-    "Performance_degradation_-_Response_time_worse_than_baseline" = {
+    "Performance degradation - Response time worse than baseline" = {
       detector_type      = "RequestPerformanceDegradationDetector"
       scope_resource_ids = ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-ldo-uks-tst-01/providers/Microsoft.Insights/components/appi-ldo-uks-tst-01"]
       action_group_ids   = ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-ldo-uks-tst-01/providers/Microsoft.Insights/actionGroups/ag-ldo-uks-tst-01"]
@@ -90,7 +90,7 @@ variables {
   }
 
   activity_log_alerts = {
-    "Service_health_-_Incidents_affecting_UK_South" = {
+    "Service health - Incidents affecting UK South" = {
       scopes           = ["/subscriptions/00000000-0000-0000-0000-000000000000"]
       action_group_ids = ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-ldo-uks-tst-01/providers/Microsoft.Insights/actionGroups/ag-ldo-uks-tst-01"]
 
@@ -113,47 +113,47 @@ run "sensible_defaults" {
   command = plan
 
   assert {
-    condition     = azurerm_monitor_metric_alert.this["Application_errors_-_Failed_requests_over_threshold"].enabled == true
+    condition     = azurerm_monitor_metric_alert.this["Application errors - Failed requests over threshold"].enabled == true
     error_message = "Metric alerts should be enabled by default."
   }
 
   assert {
-    condition     = azurerm_monitor_metric_alert.this["Application_errors_-_Failed_requests_over_threshold"].severity == 3
+    condition     = azurerm_monitor_metric_alert.this["Application errors - Failed requests over threshold"].severity == 3
     error_message = "Metric alert severity should default to 3."
   }
 
   assert {
-    condition     = azurerm_monitor_metric_alert.this["Application_errors_-_Failed_requests_over_threshold"].frequency == "PT5M" && azurerm_monitor_metric_alert.this["Application_errors_-_Failed_requests_over_threshold"].window_size == "PT5M"
+    condition     = azurerm_monitor_metric_alert.this["Application errors - Failed requests over threshold"].frequency == "PT5M" && azurerm_monitor_metric_alert.this["Application errors - Failed requests over threshold"].window_size == "PT5M"
     error_message = "Metric alerts should default to a PT5M frequency and window."
   }
 
   assert {
-    condition     = azurerm_monitor_metric_alert.this["Application_errors_-_Failed_requests_over_threshold"].auto_mitigate == true
+    condition     = azurerm_monitor_metric_alert.this["Application errors - Failed requests over threshold"].auto_mitigate == true
     error_message = "Metric alerts should auto-mitigate by default."
   }
 
   assert {
-    condition     = azurerm_monitor_scheduled_query_rules_alert_v2.this["Ingestion_volume_-_Billable_data_over_baseline"].evaluation_frequency == "PT5M" && azurerm_monitor_scheduled_query_rules_alert_v2.this["Ingestion_volume_-_Billable_data_over_baseline"].window_duration == "PT5M"
+    condition     = azurerm_monitor_scheduled_query_rules_alert_v2.this["Ingestion volume - Billable data over baseline"].evaluation_frequency == "PT5M" && azurerm_monitor_scheduled_query_rules_alert_v2.this["Ingestion volume - Billable data over baseline"].window_duration == "PT5M"
     error_message = "Scheduled query rules should default to a PT5M evaluation frequency and window."
   }
 
   assert {
-    condition     = azurerm_monitor_smart_detector_alert_rule.this["Performance_degradation_-_Response_time_worse_than_baseline"].severity == "Sev3"
+    condition     = azurerm_monitor_smart_detector_alert_rule.this["Performance degradation - Response time worse than baseline"].severity == "Sev3"
     error_message = "Smart detector severity should default to Sev3."
   }
 
   assert {
-    condition     = azurerm_monitor_smart_detector_alert_rule.this["Performance_degradation_-_Response_time_worse_than_baseline"].frequency == "P1D"
+    condition     = azurerm_monitor_smart_detector_alert_rule.this["Performance degradation - Response time worse than baseline"].frequency == "P1D"
     error_message = "Smart detector frequency should default to the daily cadence (only FailureAnomaliesDetector runs PT1M, and Azure auto-creates that rule per component)."
   }
 
   assert {
-    condition     = azurerm_monitor_activity_log_alert.this["Service_health_-_Incidents_affecting_UK_South"].location == "global"
+    condition     = azurerm_monitor_activity_log_alert.this["Service health - Incidents affecting UK South"].location == "global"
     error_message = "Activity log alerts are a global service."
   }
 
   assert {
-    condition     = azurerm_monitor_metric_alert.this["Application_errors_-_Failed_requests_over_threshold"].resource_group_name == "rg-ldo-uks-tst-01"
+    condition     = azurerm_monitor_metric_alert.this["Application errors - Failed requests over threshold"].resource_group_name == "rg-ldo-uks-tst-01"
     error_message = "The resource group name should be parsed from resource_group_id."
   }
 }
@@ -163,12 +163,12 @@ run "tags_fall_back_to_module_tags" {
   command = plan
 
   assert {
-    condition     = azurerm_monitor_metric_alert.this["Application_errors_-_Failed_requests_over_threshold"].tags["Environment"] == "tst"
+    condition     = azurerm_monitor_metric_alert.this["Application errors - Failed requests over threshold"].tags["Environment"] == "tst"
     error_message = "Rules without their own tags should inherit the module tags."
   }
 
   assert {
-    condition     = azurerm_monitor_metric_alert.this["Latency_anomaly_-_Response_time_deviates_from_baseline"].tags["Team"] == "platform" && !contains(keys(azurerm_monitor_metric_alert.this["Latency_anomaly_-_Response_time_deviates_from_baseline"].tags), "Environment")
+    condition     = azurerm_monitor_metric_alert.this["Latency anomaly - Response time deviates from baseline"].tags["Team"] == "platform" && !contains(keys(azurerm_monitor_metric_alert.this["Latency anomaly - Response time deviates from baseline"].tags), "Environment")
     error_message = "Rules with their own tags should keep them, not merge the module tags."
   }
 }
@@ -179,47 +179,47 @@ run "criteria_styles_render" {
   command = plan
 
   assert {
-    condition     = tolist(azurerm_monitor_metric_alert.this["Application_errors_-_Failed_requests_over_threshold"].criteria)[0].metric_name == "requests/failed"
+    condition     = tolist(azurerm_monitor_metric_alert.this["Application errors - Failed requests over threshold"].criteria)[0].metric_name == "requests/failed"
     error_message = "Static criteria should render into the criteria block."
   }
 
   assert {
-    condition     = tolist(tolist(azurerm_monitor_metric_alert.this["Application_errors_-_Failed_requests_over_threshold"].criteria)[0].dimension)[0].values[0] == "500"
+    condition     = tolist(tolist(azurerm_monitor_metric_alert.this["Application errors - Failed requests over threshold"].criteria)[0].dimension)[0].values[0] == "500"
     error_message = "Criteria dimensions should render."
   }
 
   assert {
-    condition     = tolist(azurerm_monitor_metric_alert.this["Latency_anomaly_-_Response_time_deviates_from_baseline"].dynamic_criteria)[0].alert_sensitivity == "Medium"
+    condition     = tolist(azurerm_monitor_metric_alert.this["Latency anomaly - Response time deviates from baseline"].dynamic_criteria)[0].alert_sensitivity == "Medium"
     error_message = "Dynamic criteria should render into the dynamic_criteria block."
   }
 
   assert {
-    condition     = length(azurerm_monitor_metric_alert.this["Latency_anomaly_-_Response_time_deviates_from_baseline"].criteria) == 0
+    condition     = length(azurerm_monitor_metric_alert.this["Latency anomaly - Response time deviates from baseline"].criteria) == 0
     error_message = "A dynamic-criteria rule should not also render static criteria."
   }
 
   assert {
-    condition     = tolist(azurerm_monitor_metric_alert.this["Availability_-_Web_test_failures_across_locations"].application_insights_web_test_location_availability_criteria)[0].failed_location_count == 2
+    condition     = tolist(azurerm_monitor_metric_alert.this["Availability - Web test failures across locations"].application_insights_web_test_location_availability_criteria)[0].failed_location_count == 2
     error_message = "Web test availability criteria should render into their block."
   }
 
   assert {
-    condition     = tolist(azurerm_monitor_scheduled_query_rules_alert_v2.this["Ingestion_volume_-_Billable_data_over_baseline"].criteria)[0].metric_measure_column == "IngestedGB"
+    condition     = tolist(azurerm_monitor_scheduled_query_rules_alert_v2.this["Ingestion volume - Billable data over baseline"].criteria)[0].metric_measure_column == "IngestedGB"
     error_message = "The measured column should render for non-Count aggregations."
   }
 
   assert {
-    condition     = tolist(tolist(azurerm_monitor_scheduled_query_rules_alert_v2.this["Ingestion_volume_-_Billable_data_over_baseline"].criteria)[0].failing_periods)[0].number_of_evaluation_periods == 1
+    condition     = tolist(tolist(azurerm_monitor_scheduled_query_rules_alert_v2.this["Ingestion volume - Billable data over baseline"].criteria)[0].failing_periods)[0].number_of_evaluation_periods == 1
     error_message = "Failing periods should render inside the criteria block."
   }
 
   assert {
-    condition     = tolist(azurerm_monitor_activity_log_alert.this["Service_health_-_Incidents_affecting_UK_South"].criteria)[0].category == "ServiceHealth"
+    condition     = tolist(azurerm_monitor_activity_log_alert.this["Service health - Incidents affecting UK South"].criteria)[0].category == "ServiceHealth"
     error_message = "Activity log criteria should render."
   }
 
   assert {
-    condition     = contains(tolist(tolist(tolist(azurerm_monitor_activity_log_alert.this["Service_health_-_Incidents_affecting_UK_South"].criteria)[0].service_health)[0].locations), "UK South")
+    condition     = contains(tolist(tolist(tolist(azurerm_monitor_activity_log_alert.this["Service health - Incidents affecting UK South"].criteria)[0].service_health)[0].locations), "UK South")
     error_message = "The service health refinement block should render."
   }
 }
@@ -230,27 +230,27 @@ run "actions_and_identity_wire_up" {
   command = plan
 
   assert {
-    condition     = length(azurerm_monitor_metric_alert.this["Application_errors_-_Failed_requests_over_threshold"].action) == 1
+    condition     = length(azurerm_monitor_metric_alert.this["Application errors - Failed requests over threshold"].action) == 1
     error_message = "Metric alert action groups should each render an action block."
   }
 
   assert {
-    condition     = length(tolist(azurerm_monitor_scheduled_query_rules_alert_v2.this["Ingestion_volume_-_Billable_data_over_baseline"].action)[0].action_groups) == 1
+    condition     = length(tolist(azurerm_monitor_scheduled_query_rules_alert_v2.this["Ingestion volume - Billable data over baseline"].action)[0].action_groups) == 1
     error_message = "Scheduled query rules should carry their action groups."
   }
 
   assert {
-    condition     = tolist(azurerm_monitor_scheduled_query_rules_alert_v2.this["Ingestion_volume_-_Billable_data_over_baseline"].identity)[0].type == "SystemAssigned"
+    condition     = tolist(azurerm_monitor_scheduled_query_rules_alert_v2.this["Ingestion volume - Billable data over baseline"].identity)[0].type == "SystemAssigned"
     error_message = "identity = {} should default to a system-assigned identity."
   }
 
   assert {
-    condition     = length(tolist(azurerm_monitor_smart_detector_alert_rule.this["Performance_degradation_-_Response_time_worse_than_baseline"].action_group)[0].ids) == 1
+    condition     = length(tolist(azurerm_monitor_smart_detector_alert_rule.this["Performance degradation - Response time worse than baseline"].action_group)[0].ids) == 1
     error_message = "Smart detector rules should carry their action group ids."
   }
 
   assert {
-    condition     = length(azurerm_monitor_activity_log_alert.this["Service_health_-_Incidents_affecting_UK_South"].action) == 1
+    condition     = length(azurerm_monitor_activity_log_alert.this["Service health - Incidents affecting UK South"].action) == 1
     error_message = "Activity log alert action groups should each render an action block."
   }
 }
@@ -261,7 +261,7 @@ run "metric_alert_with_two_criteria_styles_is_rejected" {
 
   variables {
     metric_alerts = {
-      "Bad_rule_-_Two_criteria_styles" = {
+      "Bad rule - Two criteria styles" = {
         scopes = ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-ldo-uks-tst-01/providers/Microsoft.Insights/components/appi-ldo-uks-tst-01"]
 
         criteria = [{
@@ -291,7 +291,7 @@ run "metric_alert_with_no_criteria_is_rejected" {
 
   variables {
     metric_alerts = {
-      "Bad_rule_-_No_criteria" = {
+      "Bad rule - No criteria" = {
         scopes = ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-ldo-uks-tst-01/providers/Microsoft.Insights/components/appi-ldo-uks-tst-01"]
       }
     }
@@ -305,7 +305,7 @@ run "metric_alert_severity_out_of_range_is_rejected" {
 
   variables {
     metric_alerts = {
-      "Bad_rule_-_Severity_five" = {
+      "Bad rule - Severity five" = {
         scopes   = ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-ldo-uks-tst-01/providers/Microsoft.Insights/components/appi-ldo-uks-tst-01"]
         severity = 5
 
@@ -330,7 +330,7 @@ run "scheduled_query_without_measure_column_is_rejected" {
 
   variables {
     scheduled_query_alerts = {
-      "Bad_rule_-_Average_without_column" = {
+      "Bad rule - Average without column" = {
         scopes = ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-ldo-uks-tst-01/providers/Microsoft.OperationalInsights/workspaces/log-ldo-uks-tst-01"]
 
         criteria = {
@@ -352,7 +352,7 @@ run "smart_detector_numeric_severity_is_rejected" {
 
   variables {
     smart_detector_alerts = {
-      "Bad_rule_-_Numeric_severity" = {
+      "Bad rule - Numeric severity" = {
         detector_type      = "FailureAnomaliesDetector"
         scope_resource_ids = ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-ldo-uks-tst-01/providers/Microsoft.Insights/components/appi-ldo-uks-tst-01"]
         severity           = "3"
@@ -370,7 +370,7 @@ run "activity_log_bad_category_is_rejected" {
 
   variables {
     activity_log_alerts = {
-      "Bad_rule_-_Unknown_category" = {
+      "Bad rule - Unknown category" = {
         scopes = ["/subscriptions/00000000-0000-0000-0000-000000000000"]
 
         criteria = {

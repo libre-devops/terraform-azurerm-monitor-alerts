@@ -31,7 +31,7 @@ module "monitor_alerts" {
   tags              = module.tags.tags
 
   activity_log_alerts = {
-    "Administrative_activity_-_Critical_operations_in_the_example_resource_group" = {
+    "Administrative activity - Critical operations in the example resource group" = {
       scopes      = [module.rg.ids[local.rg_name]]
       description = "Fires on critical-level administrative operations recorded against the example resource group."
 

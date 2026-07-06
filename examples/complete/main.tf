@@ -103,7 +103,7 @@ module "monitor_alerts" {
   tags              = module.tags.tags
 
   metric_alerts = {
-    "Application_errors_-_Failed_requests_over_threshold" = {
+    "Application errors - Failed requests over threshold" = {
       scopes           = [module.app_insights.ids[local.appi_name]]
       description      = "Fires when more than 10 requests fail in a 5 minute window, split by result code."
       severity         = 1
@@ -119,7 +119,7 @@ module "monitor_alerts" {
       }]
     }
 
-    "Latency_anomaly_-_Response_time_deviates_from_learned_baseline" = {
+    "Latency anomaly - Response time deviates from learned baseline" = {
       scopes           = [module.app_insights.ids[local.appi_name]]
       description      = "Machine-learned threshold on server response time: fires when latency deviates from the component's own baseline rather than a hand-picked number."
       severity         = 2
@@ -137,7 +137,7 @@ module "monitor_alerts" {
     }
 
     # Web test availability alerts scope BOTH the web test and the component.
-    "Availability_-_Web_test_failing_from_multiple_locations" = {
+    "Availability - Web test failing from multiple locations" = {
       scopes           = [azurerm_application_insights_standard_web_test.availability.id, module.app_insights.ids[local.appi_name]]
       description      = "Fires when the availability test fails from two or more test locations at once."
       severity         = 1
@@ -152,7 +152,7 @@ module "monitor_alerts" {
   }
 
   scheduled_query_alerts = {
-    "Ingestion_volume_-_Billable_data_over_expected_baseline" = {
+    "Ingestion volume - Billable data over expected baseline" = {
       scopes           = [module.law.workspace_ids[local.law_name]]
       description      = "Fires when billable ingestion into the workspace exceeds the expected baseline: the classic cost early-warning."
       severity         = 2
@@ -198,7 +198,7 @@ module "monitor_alerts" {
   # may exist per resource (409 ScopeInUse, proven live), so the example demonstrates a daily
   # detector the platform does NOT create for you.
   smart_detector_alerts = {
-    "Performance_degradation_-_Response_time_worse_than_learned_baseline" = {
+    "Performance degradation - Response time worse than learned baseline" = {
       detector_type      = "RequestPerformanceDegradationDetector"
       scope_resource_ids = [module.app_insights.ids[local.appi_name]]
       description        = "AI-driven daily detector: fires when server response time degrades against the component's learned baseline rather than a fixed threshold."
@@ -210,7 +210,7 @@ module "monitor_alerts" {
   }
 
   activity_log_alerts = {
-    "Administrative_activity_-_Example_resource_group_deleted" = {
+    "Administrative activity - Example resource group deleted" = {
       scopes           = [module.rg.ids[local.rg_name]]
       description      = "Fires when the example resource group is deleted: the control-plane tripwire."
       action_group_ids = [module.action_group.ids[local.ag_name]]
@@ -224,7 +224,7 @@ module "monitor_alerts" {
 
     # Service health alerts evaluate the whole subscription, so they scope to it while living in
     # the resource group like any other rule.
-    "Service_health_-_Incidents_affecting_UK_South" = {
+    "Service health - Incidents affecting UK South" = {
       scopes           = [data.azurerm_subscription.current.id]
       description      = "Fires when Azure reports a service incident affecting UK South."
       action_group_ids = [module.action_group.ids[local.ag_name]]
@@ -239,7 +239,7 @@ module "monitor_alerts" {
       }
     }
 
-    "Resource_health_-_Resources_made_unavailable_by_platform_faults" = {
+    "Resource health - Resources made unavailable by platform faults" = {
       scopes           = [module.rg.ids[local.rg_name]]
       description      = "Fires when a resource in the example resource group goes from Available to Unavailable for a platform-initiated reason."
       action_group_ids = [module.action_group.ids[local.ag_name]]
