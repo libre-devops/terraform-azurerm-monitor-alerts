@@ -1,22 +1,67 @@
-variable "resource_group_id" {
-  description = "Resource id of the resource group the alert rules are created in. The resource group name and subscription are parsed from this id."
-  type        = string
+variable "activity_log_alerts" {
+  description = <<-EOT
+    Activity log alert rules keyed by name: subscription control-plane events (Administrative),
+    Service Health, and Resource Health. criteria.category is required; the service_health and
+    resource_health blocks refine their categories.
+  EOT
+  type = map(object({
+    scopes      = list(string)
+    description = optional(string)
+    enabled     = optional(bool, true)
+    tags        = optional(map(string))
+
+    action_group_ids   = optional(list(string), [])
+    webhook_properties = optional(map(string))
+
+    criteria = object({
+      category                = string
+      caller                  = optional(string)
+      level                   = optional(string)
+      levels                  = optional(list(string))
+      operation_name          = optional(string)
+      resource_group          = optional(string)
+      resource_groups         = optional(list(string))
+      resource_id             = optional(string)
+      resource_ids            = optional(list(string))
+      resource_provider       = optional(string)
+      resource_providers      = optional(list(string))
+      resource_type           = optional(string)
+      resource_types          = optional(list(string))
+      status                  = optional(string)
+      statuses                = optional(list(string))
+      sub_status              = optional(string)
+      sub_statuses            = optional(list(string))
+      recommendation_category = optional(string)
+      recommendation_impact   = optional(string)
+      recommendation_type     = optional(string)
+
+      service_health = optional(object({
+        events    = optional(list(string))
+        locations = optional(list(string))
+        services  = optional(list(string))
+      }))
+
+      resource_health = optional(object({
+        current  = optional(list(string))
+        previous = optional(list(string))
+        reason   = optional(list(string))
+      }))
+    })
+  }))
+  default = {}
 
   validation {
-    condition     = try(provider::azurerm::parse_resource_id(var.resource_group_id).resource_type, "") == "resourceGroups"
-    error_message = "resource_group_id must be a resource group resource id."
+    condition = alltrue([
+      for a in values(var.activity_log_alerts) :
+      contains(["Administrative", "Autoscale", "Policy", "Recommendation", "ResourceHealth", "Security", "ServiceHealth"], a.criteria.category)
+    ])
+    error_message = "activity log criteria.category must be one of Administrative, Autoscale, Policy, Recommendation, ResourceHealth, Security, ServiceHealth."
   }
 }
 
 variable "location" {
   description = "Azure region for the regional alert rules (scheduled query rules). Metric, smart detector, and activity log alerts are location-less or global."
   type        = string
-}
-
-variable "tags" {
-  description = "Tags applied to the alert rules (unless a rule sets its own)."
-  type        = map(string)
-  default     = {}
 }
 
 variable "metric_alerts" {
@@ -94,11 +139,24 @@ variable "metric_alerts" {
   }
 }
 
+variable "resource_group_id" {
+  description = "Resource id of the resource group the alert rules are created in. The resource group name and subscription are parsed from this id."
+  type        = string
+
+  validation {
+    condition     = try(provider::azurerm::parse_resource_id(var.resource_group_id).resource_type, "") == "resourceGroups"
+    error_message = "resource_group_id must be a resource group resource id."
+  }
+}
+
 variable "scheduled_query_alerts" {
   description = <<-EOT
     Log search (KQL) alert rules keyed by name (scheduled query rules v2). Names are descriptive.
     Count aggregation counts result rows; any other time_aggregation_method requires
     metric_measure_column naming the numeric column (the API rejects it otherwise, proven live).
+    Azure validates the KQL against the live workspace schema at rule-create time, so a rule
+    that targets a table its own apply creates (for example SecurityIncident on a freshly
+    onboarded Sentinel workspace) needs skip_query_validation = true (also proven live).
   EOT
   type = map(object({
     scopes       = list(string)
@@ -191,63 +249,8 @@ variable "smart_detector_alerts" {
   }
 }
 
-variable "activity_log_alerts" {
-  description = <<-EOT
-    Activity log alert rules keyed by name: subscription control-plane events (Administrative),
-    Service Health, and Resource Health. criteria.category is required; the service_health and
-    resource_health blocks refine their categories.
-  EOT
-  type = map(object({
-    scopes      = list(string)
-    description = optional(string)
-    enabled     = optional(bool, true)
-    tags        = optional(map(string))
-
-    action_group_ids   = optional(list(string), [])
-    webhook_properties = optional(map(string))
-
-    criteria = object({
-      category                = string
-      caller                  = optional(string)
-      level                   = optional(string)
-      levels                  = optional(list(string))
-      operation_name          = optional(string)
-      resource_group          = optional(string)
-      resource_groups         = optional(list(string))
-      resource_id             = optional(string)
-      resource_ids            = optional(list(string))
-      resource_provider       = optional(string)
-      resource_providers      = optional(list(string))
-      resource_type           = optional(string)
-      resource_types          = optional(list(string))
-      status                  = optional(string)
-      statuses                = optional(list(string))
-      sub_status              = optional(string)
-      sub_statuses            = optional(list(string))
-      recommendation_category = optional(string)
-      recommendation_impact   = optional(string)
-      recommendation_type     = optional(string)
-
-      service_health = optional(object({
-        events    = optional(list(string))
-        locations = optional(list(string))
-        services  = optional(list(string))
-      }))
-
-      resource_health = optional(object({
-        current  = optional(list(string))
-        previous = optional(list(string))
-        reason   = optional(list(string))
-      }))
-    })
-  }))
-  default = {}
-
-  validation {
-    condition = alltrue([
-      for a in values(var.activity_log_alerts) :
-      contains(["Administrative", "Autoscale", "Policy", "Recommendation", "ResourceHealth", "Security", "ServiceHealth"], a.criteria.category)
-    ])
-    error_message = "activity log criteria.category must be one of Administrative, Autoscale, Policy, Recommendation, ResourceHealth, Security, ServiceHealth."
-  }
+variable "tags" {
+  description = "Tags applied to the alert rules (unless a rule sets its own)."
+  type        = map(string)
+  default     = {}
 }
