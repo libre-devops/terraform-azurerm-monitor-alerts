@@ -194,15 +194,17 @@ module "monitor_alerts" {
     }
   }
 
+  # Azure auto-creates the FailureAnomaliesDetector rule for every new component and only one
+  # may exist per resource (409 ScopeInUse, proven live), so the example demonstrates a daily
+  # detector the platform does NOT create for you.
   smart_detector_alerts = {
-    "Failure_anomalies_-_Abnormal_rise_in_failed_request_rate" = {
-      detector_type      = "FailureAnomaliesDetector"
+    "Performance_degradation_-_Response_time_worse_than_learned_baseline" = {
+      detector_type      = "RequestPerformanceDegradationDetector"
       scope_resource_ids = [module.app_insights.ids[local.appi_name]]
-      description        = "AI-driven detector: fires on an abnormal rise in the failed request rate rather than a fixed threshold."
-      frequency          = "PT1M"
+      description        = "AI-driven daily detector: fires when server response time degrades against the component's learned baseline rather than a fixed threshold."
       action_group_ids   = [module.action_group.ids[local.ag_name]]
 
-      email_subject       = "Failure anomaly detected"
+      email_subject       = "Response time degradation detected"
       throttling_duration = "PT20M"
     }
   }

@@ -82,10 +82,9 @@ variables {
   }
 
   smart_detector_alerts = {
-    "Failure_anomalies_-_Abnormal_rise_in_failed_requests" = {
-      detector_type      = "FailureAnomaliesDetector"
+    "Performance_degradation_-_Response_time_worse_than_baseline" = {
+      detector_type      = "RequestPerformanceDegradationDetector"
       scope_resource_ids = ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-ldo-uks-tst-01/providers/Microsoft.Insights/components/appi-ldo-uks-tst-01"]
-      frequency          = "PT1M"
       action_group_ids   = ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-ldo-uks-tst-01/providers/Microsoft.Insights/actionGroups/ag-ldo-uks-tst-01"]
     }
   }
@@ -139,8 +138,13 @@ run "sensible_defaults" {
   }
 
   assert {
-    condition     = azurerm_monitor_smart_detector_alert_rule.this["Failure_anomalies_-_Abnormal_rise_in_failed_requests"].severity == "Sev3"
+    condition     = azurerm_monitor_smart_detector_alert_rule.this["Performance_degradation_-_Response_time_worse_than_baseline"].severity == "Sev3"
     error_message = "Smart detector severity should default to Sev3."
+  }
+
+  assert {
+    condition     = azurerm_monitor_smart_detector_alert_rule.this["Performance_degradation_-_Response_time_worse_than_baseline"].frequency == "P1D"
+    error_message = "Smart detector frequency should default to the daily cadence (only FailureAnomaliesDetector runs PT1M, and Azure auto-creates that rule per component)."
   }
 
   assert {
@@ -241,7 +245,7 @@ run "actions_and_identity_wire_up" {
   }
 
   assert {
-    condition     = length(tolist(azurerm_monitor_smart_detector_alert_rule.this["Failure_anomalies_-_Abnormal_rise_in_failed_requests"].action_group)[0].ids) == 1
+    condition     = length(tolist(azurerm_monitor_smart_detector_alert_rule.this["Performance_degradation_-_Response_time_worse_than_baseline"].action_group)[0].ids) == 1
     error_message = "Smart detector rules should carry their action group ids."
   }
 

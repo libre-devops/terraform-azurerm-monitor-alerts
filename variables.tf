@@ -226,6 +226,12 @@ variable "smart_detector_alerts" {
     DependencyPerformanceDegradationDetector, ExceptionVolumeChangedDetector,
     TraceSeverityDetector, MemoryLeakDetector. Severity here is the string form (Sev0 to Sev4),
     unlike the numeric severities of the other rule types.
+
+    FailureAnomaliesDetector caveat (proven live): Azure auto-creates a "Failure Anomalies"
+    rule for every new App Insights component and only ONE FailureAnomaliesDetector rule may
+    exist per resource, so creating another fails with 409 ScopeInUse. Import or delete the
+    auto-created rule first, or use this module for the other detector types. Cadence:
+    FailureAnomaliesDetector runs PT1M; the other detectors run daily (P1D, the default here).
   EOT
   type = map(object({
     detector_type      = string
@@ -233,7 +239,7 @@ variable "smart_detector_alerts" {
     description        = optional(string)
     severity           = optional(string, "Sev3")
     enabled            = optional(bool, true)
-    frequency          = optional(string, "PT5M")
+    frequency          = optional(string, "P1D")
     tags               = optional(map(string))
 
     action_group_ids    = list(string)

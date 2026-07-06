@@ -41,7 +41,10 @@ The module folds them into sibling maps with the quirks handled:
   variable).
 - **Smart detector rules**, the App Insights AI detectors (failure anomalies, performance
   degradation, exception volume, trace severity, memory leak), with the string `Sev0..Sev4`
-  severity oddity validated so a numeric slip fails the plan, not the apply.
+  severity oddity validated so a numeric slip fails the plan, not the apply. Two proven-live
+  facts documented on the variable: Azure auto-creates the failure anomalies rule per component
+  and allows only one per resource (`ScopeInUse`), and the other detectors run on a daily
+  cadence (`P1D`, the default here).
 - **Activity log alerts** for control-plane, Service Health, and Resource Health events, with the
   category whitelist validated and `location = "global"` handled.
 
