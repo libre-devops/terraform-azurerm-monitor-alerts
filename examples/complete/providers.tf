@@ -7,6 +7,11 @@ provider "azurerm" {
     }
   }
 
+  # Smart detector alert rules live in Microsoft.AlertsManagement, which is NOT in the
+  # provider's core auto-registration set: a fresh subscription fails with 409
+  # MissingSubscriptionRegistration without this (proven live).
+  resource_providers_to_register = ["Microsoft.AlertsManagement"]
+
   storage_use_azuread = true
   use_oidc            = true
 }
